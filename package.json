@@ -1,0 +1,30 @@
+{
+  "name": "@scrypta/login",
+  "version": "1.0.0",
+  "description": "Enable ScryptaID Login for every website.",
+  "private": false,
+  "main": "src/index.js",
+  "scripts": {
+    "test:local": "node test-cli/test.local.js",
+    "pub": "npm publish --access public"
+  },
+  "keywords": [
+    "blockchain",
+    "scrypta",
+    "scryptachain"
+  ],
+  "author": "Scrypta",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scryptachain/scrypta-login"
+  },
+  "bugs": {
+    "url": "https://github.com/scryptachain/scrypta-login/issues",
+    "email": "sebastiano.c@scrypta.foundation"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@scrypta/core": "^1.9.6",
+    "qrcode": "^1.4.4"
+  }
+}
