@@ -3,7 +3,9 @@ const QRCode = require('qrcode')
 
 module.exports = class ScryptaLogin {
     constructor(isBrowser = false) {
+        this.isBrowser = false
         if (isBrowser) {
+            this.isBrowser = true
             this.scrypta = new ScryptaCore(true)
         } else {
             this.scrypta = new ScryptaCore
@@ -14,7 +16,12 @@ module.exports = class ScryptaLogin {
         const app = this
         return new Promise(async response => {
             let newAddress = await app.scrypta.createAddress('temp', false)
-            let qrcode = await QRCode.toDataURL('login:' + newAddress.pub)
+            var opts = {
+                errorCorrectionLevel: 'H',
+                quality: 1,
+                margin: 0,
+            }
+            let qrcode = await QRCode.toDataURL('login:' + newAddress.pub, opts)
             response({
                 address: newAddress.pub,
                 qrcode: qrcode
@@ -23,11 +30,6 @@ module.exports = class ScryptaLogin {
                 try {
                     let parsed = JSON.parse(received.message)
                     if (parsed.protocol !== undefined && parsed.protocol === 'login://' && parsed.request !== undefined && parsed.request === newAddress.pub) {
-                        if (app.isBrowser) {
-                            let SIDS = parsed.sid.split(':')
-                            localStorage.setItem('SID', parsed.sid)
-                            localStorage.setItem('sid_backup', SIDS[0])
-                        }
                         cb(parsed.sid)
                     }
                 } catch (e) {
@@ -35,30 +37,6 @@ module.exports = class ScryptaLogin {
                 }
             })
         })
-    }
-
-    ui() {
-        const app = this
-        if (app.isBrowser) {
-            let newAddress = await app.scrypta.createAddress('temp', false)
-            let qrcode = await QRCode.toDataURL('login:' + newAddress.pub)
-            app.scrypta.connectP2P(function (received) {
-                try {
-                    let parsed = JSON.parse(received.message)
-                    if (parsed.protocol !== undefined && parsed.protocol === 'login://' && parsed.request !== undefined && parsed.request === newAddress.pub) {
-                        if (app.isBrowser) {
-                            let SIDS = parsed.sid.split(':')
-                            localStorage.setItem('SID', parsed.sid)
-                            localStorage.setItem('sid_backup', SIDS[0])
-                        }
-                    }
-                } catch (e) {
-                    console.log('Message not related to login')
-                }
-            })
-        } else {
-            console.log("CAN'T CREATE UI WITHOUT BROWSER.")
-        }
     }
 
     login(request, sid, password) {
