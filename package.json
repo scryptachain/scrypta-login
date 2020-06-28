@@ -1,6 +1,6 @@
 {
   "name": "@scrypta/login",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "Enable ScryptaID Login for every website.",
   "private": false,
   "main": "src/index.js",
@@ -24,7 +24,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@scrypta/core": "^1.9.9",
+    "@scrypta/core": "^2.0.5",
     "qrcode": "^1.4.4"
   }
 }

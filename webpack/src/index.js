@@ -211,6 +211,7 @@ function loginWithSid(sid) {
     let SIDS = sid.split(':')
     localStorage.setItem('SID', sid)
     localStorage.setItem('sid_backup', SIDS[0])
+    location.reload()
 }
 
 appendButton()
