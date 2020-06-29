@@ -1,17 +1,16 @@
 import _ from 'lodash'
 const ScryptaLogin = require('@scrypta/login')
-import css from './css/scryptastyle.css'
-import sen from './css/sen.css'
-import mdi from './css/mdi.min.css'
+import css from './css/style.css'
 import jsQR from "jsqr"
 
 var video
 var canvasElement
 var canvas
 var loadingMessage
-var dapp 
-var required
-var optional
+var dapp = ''
+var required = []
+var optional = []
+var callback = ''
 
 async function initScryptaLogin() {
     const scryptalogin = new ScryptaLogin(true)
@@ -47,11 +46,15 @@ async function initScryptaLogin() {
         mainwrapper.appendChild(wrapper)
 
         const title = document.createElement('h1')
-        title.innerHTML = 'Login with ScryptaID'
+        if(dapp === ''){
+            title.innerHTML = 'Login with ScryptaID'
+        }else{
+            title.innerHTML = dapp
+        }
         wrapper.appendChild(title)
 
         const p = document.createElement('p')
-        p.innerHTML = 'Select your preferred login method'
+        p.innerHTML = 'Choose a login method'
         wrapper.appendChild(p)
 
         // SELECTION
@@ -72,7 +75,7 @@ async function initScryptaLogin() {
         manentwrapper.appendChild(qrcode)
 
         const manentinstructions = document.createElement('p')
-        manentinstructions.innerHTML = 'Scan this code in login section.'
+        manentinstructions.innerHTML = 'Scan this code in remote login section.'
         manentwrapper.appendChild(manentinstructions)
 
         const manentselector = document.getElementById('manent-selector')
@@ -192,6 +195,7 @@ function appendButton() {
         let wrapper = document.getElementById('scrypta-login')
         wrapper.appendChild(button)
         dapp = wrapper.getAttribute("dapp")
+        callback = wrapper.getAttribute("callback")
         required = wrapper.getAttribute("required").split(',')
         optional = wrapper.getAttribute("optional").split(',')
     }
@@ -211,7 +215,11 @@ function loginWithSid(sid) {
     let SIDS = sid.split(':')
     localStorage.setItem('SID', sid)
     localStorage.setItem('sid_backup', SIDS[0])
-    location.reload()
+    if(callback === null){
+        location.reload()
+    }else{
+        window[callback](sid)
+    }
 }
 
 appendButton()

@@ -4,7 +4,17 @@
     <title>ScryptaID Login</title>
   </head>
   <body>
-    <div id="scrypta-login" dapp="Demo" required="email,ethereum" optional="twitter"></div>
-    <script src="./main.js"></script>
+    <div style="padding: 20vh 20%; text-align:center; font-family: 'Courier New';">
+      <h1>Test Scrypta Login</h1>
+      <p>Thanks to this button you'll be able to request and inject any ScryptaID in your web page.</p>
+      <div id="scrypta-login" dapp="Demo dApp" callback="testCallback" required="email,ethereum" optional="twitter"></div>
+    </div>
+    <script src="./scrypta.login.min.js"></script>
+    <script>
+      function testCallback(sid){
+        alert('Successfully logged in, refreshing now!')
+        location.reload()
+      }
+    </script>
   </body>
 </html>

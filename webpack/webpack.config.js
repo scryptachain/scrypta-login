@@ -2,6 +2,9 @@ var path = require('path');
 
 module.exports = {
   externals: ['fs'],
+  output: {
+    filename: 'scrypta.login.min.js'
+  },
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
