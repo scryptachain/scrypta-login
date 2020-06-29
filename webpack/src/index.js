@@ -20,11 +20,11 @@ async function initScryptaLogin() {
     })
 
     let checkwrapper = document.getElementById('scrypta-login-wrapper')
-    if(checkwrapper === null){
+    if (checkwrapper === null) {
         const mainwrapper = document.createElement('div')
         mainwrapper.id = 'scrypta-login-wrapper'
         document.body.appendChild(mainwrapper)
-        
+
         const bg = document.createElement('div')
         bg.id = 'scrypta-login-bg'
         mainwrapper.appendChild(bg)
@@ -47,9 +47,9 @@ async function initScryptaLogin() {
         mainwrapper.appendChild(wrapper)
 
         const title = document.createElement('h1')
-        if(dapp === ''){
+        if (dapp === '') {
             title.innerHTML = 'Login with ScryptaID'
-        }else{
+        } else {
             title.innerHTML = dapp
         }
         wrapper.appendChild(title)
@@ -59,9 +59,9 @@ async function initScryptaLogin() {
         p.innerHTML = 'Choose a login method'
         wrapper.appendChild(p)
 
-        if(required.length > 0){
+        if (required.length > 0) {
             let requiredstring = ''
-            for(let k in required){
+            for (let k in required) {
                 required[k] = required[k].toUpperCase()
                 requiredstring += ' ' + required[k]
             }
@@ -143,8 +143,8 @@ async function initScryptaLogin() {
         const inputpassword = document.createElement('input')
         inputpassword.type = "password"
         inputpassword.id = "sid-login-password"
-        inputpassword.onkeypress = function (e){
-            if(e.keyCode === 13){
+        inputpassword.onkeypress = function (e) {
+            if (e.keyCode === 13) {
                 unlockScryptaIdentities()
             }
         }
@@ -153,7 +153,7 @@ async function initScryptaLogin() {
         const confirmbutton = document.createElement('div')
         confirmbutton.id = "confirm-button"
         confirmbutton.innerHTML = 'UNLOCK IDENTITIES'
-        confirmbutton.onclick = function(){ unlockScryptaIdentities() }
+        confirmbutton.onclick = function () { unlockScryptaIdentities() }
         confirmwrapper.appendChild(confirmbutton)
     }
 }
@@ -225,54 +225,60 @@ function selectLogin(login) {
 
 function appendButton() {
     let checkbutton = document.getElementById('scrypta-login-button')
-    if(checkbutton === null){
+    if (checkbutton === null) {
         const button = document.createElement('button')
         button.id = "scrypta-login-button"
         button.innerHTML = 'Login with ScryptaID'
         button.onclick = function () { initScryptaLogin() }
         let wrapper = document.getElementById('scrypta-login')
         wrapper.appendChild(button)
-        dapp = wrapper.getAttribute("dapp")
-        callback = wrapper.getAttribute("callback")
-        required = wrapper.getAttribute("required").split(',')
+        if (wrapper.getAttribute("dapp") !== null && wrapper.getAttribute("dapp") !== undefined) {
+            dapp = wrapper.getAttribute("dapp")
+        }
+        if (wrapper.getAttribute("callback") !== null && wrapper.getAttribute("callback") !== undefined) {
+            callback = wrapper.getAttribute("callback")
+        }
+        if (wrapper.getAttribute("required") !== null && wrapper.getAttribute("required") !== undefined) {
+            required = wrapper.getAttribute("required").split(',')
+        }
     }
 }
 
-async function unlockScryptaIdentities(){
+async function unlockScryptaIdentities() {
     const password = document.getElementById('sid-login-password').value
-    if(password.length > 0){
+    if (password.length > 0) {
         let scrypta = new ScryptaCore(true)
         let sid = localStorage.getItem('SID')
         let key = await scrypta.readKey(password, sid)
         let confirmed = {}
-        if(key !== false){
-            for(let k in required){
-                if(key.identity[required[k].toLowerCase()] !== undefined){
+        if (key !== false) {
+            for (let k in required) {
+                if (key.identity[required[k].toLowerCase()] !== undefined) {
                     let fingerprint = key.identity[required[k].toLowerCase()].fingerprint
-                    for(let z in found){
-                        if(found[z].fingerprint === fingerprint){
+                    for (let z in found) {
+                        if (found[z].fingerprint === fingerprint) {
                             confirmed[required[k].toLowerCase()] = key.identity[required[k].toLowerCase()]
                         }
                     }
                 }
             }
-            if(Object.keys(confirmed).length === required.length){
+            if (Object.keys(confirmed).length === required.length) {
                 let complete = {
                     sid: localStorage.getItem('SID'),
                     ids: confirmed
                 }
-                if(callback !== null){
+                if (callback !== null) {
                     window[callback](complete)
-                }else{
+                } else {
                     alert("Can't login without callback function!")
                 }
-            }else{
+            } else {
                 alert("Your identity doesn't contain required proof.")
             }
-        }else{
+        } else {
             alert('Wrong password!')
         }
-    }else{
+    } else {
         alert('Write your password first!')
     }
 }
@@ -287,20 +293,20 @@ function loadWalletFromFile() {
     reader.readAsText(file.files[0]);
 }
 
-function checkIdentity(address){
+function checkIdentity(address) {
     return new Promise(async response => {
         let scrypta = new ScryptaCore(true)
-        let ids = await scrypta.post('/read', {address: address, protocol: 'I://'})
-        for(let k in ids.data){
+        let ids = await scrypta.post('/read', { address: address, protocol: 'I://' })
+        for (let k in ids.data) {
             let id = ids.data[k]
-            if(required.indexOf(id.refID) !== -1){
+            if (required.indexOf(id.refID) !== -1) {
                 let identity = id.data
                 found.push(identity)
             }
         }
-        if(found.length === required.length){
+        if (found.length === required.length) {
             response(true)
-        }else{
+        } else {
             response(false)
         }
     })
@@ -310,9 +316,9 @@ async function loginWithSid(sid) {
     let SIDS = sid.split(':')
     localStorage.setItem('SID', sid)
     localStorage.setItem('sid_backup', SIDS[0])
-    if(required.length > 0){
+    if (required.length > 0) {
         let logged = await checkIdentity(SIDS[0])
-        if(logged){
+        if (logged) {
             const manentwrapper = document.getElementById('scrypta-manent-login')
             const videowrapper = document.getElementById('scrypta-card-login')
             const sidwrapper = document.getElementById('scrypta-sid-login')
@@ -331,17 +337,17 @@ async function loginWithSid(sid) {
             prequire.hidden = true
             pchoose.hidden = true
             confirmwrapper.hidden = false
-        }else{
+        } else {
             alert("Please make sure you have all required identities.")
         }
-    }else{
-        if(callback === null){
+    } else {
+        if (callback === null) {
             location.reload()
-        }else{
-            window[callback]({sid: sid})
+        } else {
+            window[callback]({ sid: sid })
         }
     }
 }
 
 appendButton()
-window.initScryptaLogin = function() { appendButton() }
+window.initScryptaLogin = function () { appendButton() }
