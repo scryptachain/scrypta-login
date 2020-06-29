@@ -143,6 +143,11 @@ async function initScryptaLogin() {
         const inputpassword = document.createElement('input')
         inputpassword.type = "password"
         inputpassword.id = "sid-login-password"
+        inputpassword.onkeypress = function (e){
+            if(e.keyCode === 13){
+                unlockScryptaIdentities()
+            }
+        }
         confirmwrapper.appendChild(inputpassword)
 
         const confirmbutton = document.createElement('div')
