@@ -89,7 +89,7 @@ async function initScryptaLogin() {
         manentwrapper.appendChild(qrcode)
 
         const manentinstructions = document.createElement('p')
-        manentinstructions.innerHTML = 'Scan this code in remote login section.'
+        manentinstructions.innerHTML = 'Scan this code in remote sign section of Manent App.'
         manentwrapper.appendChild(manentinstructions)
 
         const manentselector = document.getElementById('manent-selector')
