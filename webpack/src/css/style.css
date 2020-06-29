@@ -1,4 +1,4 @@
-#scrypta-login button, #scrypta-login-wrapper button{
+#scrypta-login button, #scrypta-login-wrapper button, #confirm-button{
     background:#39A1FF;
     color:#fff;
     border:0;
@@ -11,9 +11,22 @@
     margin:20px 10px 20px 0; 
 }
 
-#scrypta-login button:hover, #scrypta-login-wrapper button:hover{
+#scrypta-login button:hover, #scrypta-login-wrapper button:hover, #confirm-button:hover{
     cursor:pointer!important;
     opacity: 0.9;
+}
+
+#sid-login-password{
+    width:100%; 
+    height: 30px;
+    line-height: 30px;
+    font-size:16px;
+    text-align:center;
+    margin-bottom:15px;
+}
+
+#scrypta-login-confirm{
+    margin-top:25%;
 }
 
 #scrypta-login-wrapper{

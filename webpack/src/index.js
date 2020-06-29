@@ -1,5 +1,6 @@
 import _ from 'lodash'
 const ScryptaLogin = require('@scrypta/login')
+const ScryptaCore = require('@scrypta/core')
 import css from './css/style.css'
 import jsQR from "jsqr"
 
@@ -8,8 +9,8 @@ var canvasElement
 var canvas
 var loadingMessage
 var dapp = ''
+var found = []
 var required = []
-var optional = []
 var callback = ''
 
 async function initScryptaLogin() {
@@ -54,8 +55,21 @@ async function initScryptaLogin() {
         wrapper.appendChild(title)
 
         const p = document.createElement('p')
+        p.id = 'pchoose'
         p.innerHTML = 'Choose a login method'
         wrapper.appendChild(p)
+
+        if(required.length > 0){
+            let requiredstring = ''
+            for(let k in required){
+                required[k] = required[k].toUpperCase()
+                requiredstring += ' ' + required[k]
+            }
+            const prequire = document.createElement('p')
+            prequire.id = 'prequire'
+            prequire.innerHTML = '<b>Required to login:</b> ' + requiredstring
+            wrapper.appendChild(prequire)
+        }
 
         // SELECTION
 
@@ -117,6 +131,25 @@ async function initScryptaLogin() {
 
         // LOGIN CONFIRM
 
+        const confirmwrapper = document.createElement('div')
+        confirmwrapper.id = 'scrypta-login-confirm'
+        wrapper.appendChild(confirmwrapper)
+        confirmwrapper.hidden = true
+
+        const unlockinstructions = document.createElement('p')
+        unlockinstructions.innerHTML = 'Please unlock your identities to continue.'
+        confirmwrapper.appendChild(unlockinstructions)
+
+        const inputpassword = document.createElement('input')
+        inputpassword.type = "password"
+        inputpassword.id = "sid-login-password"
+        confirmwrapper.appendChild(inputpassword)
+
+        const confirmbutton = document.createElement('div')
+        confirmbutton.id = "confirm-button"
+        confirmbutton.innerHTML = 'UNLOCK IDENTITIES'
+        confirmbutton.onclick = function(){ unlockScryptaIdentities() }
+        confirmwrapper.appendChild(confirmbutton)
     }
 }
 
@@ -197,7 +230,45 @@ function appendButton() {
         dapp = wrapper.getAttribute("dapp")
         callback = wrapper.getAttribute("callback")
         required = wrapper.getAttribute("required").split(',')
-        optional = wrapper.getAttribute("optional").split(',')
+    }
+}
+
+async function unlockScryptaIdentities(){
+    const password = document.getElementById('sid-login-password').value
+    if(password.length > 0){
+        let scrypta = new ScryptaCore(true)
+        let sid = localStorage.getItem('SID')
+        let key = await scrypta.readKey(password, sid)
+        let confirmed = {}
+        if(key !== false){
+            for(let k in required){
+                if(key.identity[required[k].toLowerCase()] !== undefined){
+                    let fingerprint = key.identity[required[k].toLowerCase()].fingerprint
+                    for(let z in found){
+                        if(found[z].fingerprint === fingerprint){
+                            confirmed[required[k].toLowerCase()] = key.identity[required[k].toLowerCase()]
+                        }
+                    }
+                }
+            }
+            if(Object.keys(confirmed).length === required.length){
+                let complete = {
+                    sid: localStorage.getItem('SID'),
+                    ids: confirmed
+                }
+                if(callback !== null){
+                    window[callback](complete)
+                }else{
+                    alert("Can't login without callback function!")
+                }
+            }else{
+                alert("Your identity doesn't contain required proof.")
+            }
+        }else{
+            alert('Wrong password!')
+        }
+    }else{
+        alert('Write your password first!')
     }
 }
 
@@ -211,14 +282,59 @@ function loadWalletFromFile() {
     reader.readAsText(file.files[0]);
 }
 
-function loginWithSid(sid) {
+function checkIdentity(address){
+    return new Promise(async response => {
+        let scrypta = new ScryptaCore(true)
+        let ids = await scrypta.post('/read', {address: address, protocol: 'I://'})
+        for(let k in ids.data){
+            let id = ids.data[k]
+            if(required.indexOf(id.refID) !== -1){
+                let identity = id.data
+                found.push(identity)
+            }
+        }
+        if(found.length === required.length){
+            response(true)
+        }else{
+            response(false)
+        }
+    })
+}
+
+async function loginWithSid(sid) {
     let SIDS = sid.split(':')
     localStorage.setItem('SID', sid)
     localStorage.setItem('sid_backup', SIDS[0])
-    if(callback === null){
-        location.reload()
+    if(required.length > 0){
+        let logged = await checkIdentity(SIDS[0])
+        if(logged){
+            const manentwrapper = document.getElementById('scrypta-manent-login')
+            const videowrapper = document.getElementById('scrypta-card-login')
+            const sidwrapper = document.getElementById('scrypta-sid-login')
+            const manentselector = document.getElementById('manent-selector')
+            const videoselector = document.getElementById('qr-selector')
+            const sidselector = document.getElementById('sid-selector')
+            const confirmwrapper = document.getElementById('scrypta-login-confirm')
+            const prequire = document.getElementById('prequire')
+            const pchoose = document.getElementById('pchoose')
+            manentwrapper.hidden = true
+            videowrapper.hidden = true
+            sidwrapper.hidden = true
+            manentselector.hidden = true
+            videoselector.hidden = true
+            sidselector.hidden = true
+            prequire.hidden = true
+            pchoose.hidden = true
+            confirmwrapper.hidden = false
+        }else{
+            alert("Please make sure you have all required identities.")
+        }
     }else{
-        window[callback](sid)
+        if(callback === null){
+            location.reload()
+        }else{
+            window[callback]({sid: sid})
+        }
     }
 }
 
