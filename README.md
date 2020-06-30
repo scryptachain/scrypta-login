@@ -43,3 +43,8 @@ If you want to test it you can simply download the package with `git clone`, ins
 If you need to check the integrity of the file please use `scrypta-bvc` tool as documented here: https://github.com/scryptachain/scrypta-blockchain-versioning-cli.
 
 All the updates will be uploaded at https://proof.scryptachain.org/#/address/LiRXTmP4fe8Q3C3c9VtzzPHaxhMWnVRpTh
+
+## Demo page
+
+Check out this link to run a simple demo, available even at `webpack/dist/index.html`: 
+https://scryptachain.github.io/scrypta-login/
