@@ -11,6 +11,7 @@ var loadingMessage
 var dapp = ''
 var found = []
 var required = []
+var gateway = []
 var callback = ''
 
 async function initScryptaLogin() {
@@ -241,6 +242,9 @@ function appendButton() {
         if (wrapper.getAttribute("required") !== null && wrapper.getAttribute("required") !== undefined) {
             required = wrapper.getAttribute("required").split(',')
         }
+        if (wrapper.getAttribute("gateway") !== null && wrapper.getAttribute("gateway") !== undefined) {
+            gateway = wrapper.getAttribute("gateway").split(',')
+        }
     }
 }
 
@@ -254,10 +258,21 @@ async function unlockScryptaIdentities() {
         if (key !== false) {
             for (let k in required) {
                 if (key.identity[required[k].toLowerCase()] !== undefined) {
-                    let fingerprint = key.identity[required[k].toLowerCase()].fingerprint
+                    let id = key.identity[required[k].toLowerCase()]
+                    let fingerprint = id.fingerprint
+                    let signed = await scrypta.signMessage(key.prv, JSON.stringify(id))
                     for (let z in found) {
-                        if (found[z].fingerprint === fingerprint) {
-                            confirmed[required[k].toLowerCase()] = key.identity[required[k].toLowerCase()]
+                        if (found[z].signature === signed.signature) {
+                            let verify = await scrypta.verifyMessage(key.key, found[z].signature, JSON.stringify(id))
+                            if(verify !== false){
+                                if (gateway.length === 0) {
+                                    confirmed[required[k].toLowerCase()] = id
+                                } else {
+                                    if(gateway.indexOf(found[z].gateway) !== -1){
+                                        confirmed[required[k].toLowerCase()] = id
+                                    }
+                                }
+                            }
                         }
                     }
                 }
