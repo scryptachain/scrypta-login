@@ -47,6 +47,10 @@ async function initScryptaLogin() {
         wrapper.id = 'scrypta-login-contents'
         mainwrapper.appendChild(wrapper)
 
+        const logodark = document.createElement('div')
+        logodark.id = "scrypta-logo-dark"
+        wrapper.appendChild(logodark)
+
         const title = document.createElement('h1')
         if (dapp === '') {
             title.innerHTML = 'Login with ScryptaID'
