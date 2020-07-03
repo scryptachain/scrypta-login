@@ -230,7 +230,8 @@ function selectLogin(login) {
 
 function appendButton() {
     let checkbutton = document.getElementById('scrypta-login-button')
-    if (checkbutton === null) {
+    let checkwrapper = document.getElementById('scrypta-login')
+    if (checkbutton === null && checkwrapper !== null) {
         const button = document.createElement('button')
         button.id = "scrypta-login-button"
         button.innerHTML = 'Login with ScryptaID'
