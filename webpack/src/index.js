@@ -361,7 +361,7 @@ async function loginWithSid(sid) {
             alert("Please make sure you have all required identities.")
         }
     } else {
-        if (callback === null) {
+        if (callback === null || window[callback] === undefined) {
             location.reload()
         } else {
             window[callback]({ sid: sid })
