@@ -21,10 +21,10 @@ First of all you need to include it in your project by including the `scrypta.lo
 <script src="./scrypta.login.min.js"></script>
 ```
 
-You can even use the IPFS version, the hash is: `QmPThxteG9XA2KcNELqTcopreYEZpeY7N4DhUQ99q3PcN6` like this:
+You can even use the IPFS version, the hash is: `QmdbPrG964QBFCLmvBH3RGRY1vFkzgcWUSQKs7ictD3d6D` like this:
 
 ```
-<script src="https://ipfs.io/ipfs/QmPThxteG9XA2KcNELqTcopreYEZpeY7N4DhUQ99q3PcN6"></script>
+<script src="https://ipfs.io/ipfs/QmdbPrG964QBFCLmvBH3RGRY1vFkzgcWUSQKs7ictD3d6D"></script>
 ```
 
 Then you need to write the rendering html, where you want to render the button:
