@@ -1,12 +1,13 @@
 {
   "name": "@scrypta/login",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Enable ScryptaID Login for every website.",
   "private": false,
   "main": "src/index.js",
   "scripts": {
     "test:local": "node test-cli/test.local.js",
-    "pub": "npm publish --access public"
+    "pub": "npm publish --access public",
+    "build": "webpack"
   },
   "keywords": [
     "blockchain",
@@ -24,7 +25,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@scrypta/core": "^2.2.0",
+    "@scrypta/core": "^2.8.6",
     "qrcode": "^1.4.4"
+  },
+  "devDependencies": {
   }
 }

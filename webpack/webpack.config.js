@@ -10,6 +10,13 @@ module.exports = {
     compress: true,
     port: 9000
   },
+  resolve: {
+    fallback: { 
+      "crypto": require.resolve("crypto-browserify"),
+      "constants": require.resolve("constants-browserify"),
+      "stream": require.resolve("stream-browserify")
+    }
+  },
   module: {
     rules: [
       {
