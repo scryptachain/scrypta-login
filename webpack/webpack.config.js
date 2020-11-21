@@ -1,4 +1,5 @@
 var path = require('path');
+const webpack = require('webpack')
 
 module.exports = {
   externals: ['fs'],
@@ -10,6 +11,14 @@ module.exports = {
     compress: true,
     port: 9000
   },
+  plugins: [
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
+    })
+  ],
   resolve: {
     fallback: { 
       "crypto": require.resolve("crypto-browserify"),
